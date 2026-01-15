@@ -2,7 +2,7 @@
 <html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WELLCOOK</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
@@ -31,6 +31,8 @@
             background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
+            /* Empêche le rafraîchissement de la page lors du swipe vers le bas (Pull-to-refresh) */
+            overscroll-behavior-y: contain;
         }
 
         .logo-font {
@@ -142,23 +144,19 @@
     </svg>
 
     <header class="sticky top-0 z-50">
-        <!-- Carte Orange incluant logo + baseline -->
         <div class="logo-card mx-auto max-w-md p-8 sm:p-10 text-center border-x border-b border-white/10">
             <div class="logo-font text-5xl sm:text-6xl tracking-tighter w-full flex justify-center items-center">
                 <span class="font-bold text-white">WELL</span><span class="font-light text-orange-100">COOK</span>
             </div>
-            <!-- Baseline intégrée avec retour à la ligne après la virgule -->
             <p class="text-xs sm:text-sm text-white/90 uppercase tracking-[0.25em] font-bold mt-4 leading-relaxed">
                 La cuisson parfaite,<br>à chaque fois
             </p>
         </div>
-            <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="WellCook">
-
-<meta name="mobile-web-app-capable" content="yes">
-
-<meta name="theme-color" content="#0f172a">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="WellCook">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="theme-color" content="#0f172a">
     </header>
 
     <main class="max-w-md mx-auto p-6 space-y-8">
@@ -244,6 +242,12 @@
 
         function playAlarmSound() {
             initAudio();
+            
+            // Déclenchement de la vibration (si supporté par l'appareil)
+            if (navigator.vibrate) {
+                navigator.vibrate(500); // Fait vibrer pendant 500ms à chaque bip
+            }
+
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             oscillator.type = 'triangle';
@@ -291,7 +295,11 @@
         function renderTimers() {
             const container = document.getElementById('timers-container');
             container.innerHTML = '';
-            activeTimers.forEach(timer => {
+            
+            // TRI : On trie les minuteurs du plus court au plus long (par timeLeft)
+            const sortedTimers = [...activeTimers].sort((a, b) => a.timeLeft - b.timeLeft);
+
+            sortedTimers.forEach(timer => {
                 const mins = Math.floor(Math.max(0, timer.timeLeft) / 60);
                 const secs = Math.max(0, timer.timeLeft) % 60;
                 const progress = (timer.timeLeft / timer.totalTime) * 100;
@@ -411,7 +419,6 @@
                     timer.timeLeft--;
                     changed = true;
                     if (timer.timeLeft === 0) {
-                        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
                         showToast();
                     }
                 }
@@ -426,4 +433,3 @@
     </script>
 </body>
 </html>
-
