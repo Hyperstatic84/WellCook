@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WELLCOOK - Cuisine Gourmande</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    borderRadius: {
+                        '4xl': '2rem',
+                        '5xl': '3rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Importation des polices */
+        @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Comfortaa:wght@300;700&family=Fredoka:wght@400;600;700&family=Gravitas+One&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        .logo-font {
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .gourmet-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .gourmet-card:active {
+            transform: scale(0.95);
+        }
+
+        .active-tab {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.4);
+        }
+
+        @keyframes success-pulse {
+            0%, 100% { transform: scale(1); border-color: rgba(249, 115, 22, 0.2); }
+            50% { transform: scale(1.02); border-color: #f97316; background: rgba(249, 115, 22, 0.1); }
+        }
+        .alarm-active {
+            animation: success-pulse 0.8s infinite ease-in-out;
+            border-width: 3px;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .progress-glow {
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+        }
+
+        .big-time-bg {
+            font-family: 'Gravitas One', serif;
+            line-height: 0.7;
+            pointer-events: none;
+            color: #f97316; 
+            font-size: 210px; 
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: -8px;
+            opacity: 1 !important;
+            padding-top: 16px; 
+        }
+
+        .highlight-label {
+            position: relative;
+            z-index: 10;
+            display: inline-block;
+            padding: 6px 16px;
+            color: #000;
+            font-family: 'Abril Fatface', serif;
+            font-weight: normal;
+            text-transform: none; 
+        }
+
+        .highlight-label::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(254, 252, 232, 0.8); 
+            z-index: -1;
+            transform: rotate(-2deg) skewX(-3deg);
+            border-radius: 4px 25px 8px 30px / 10px 4px 15px 5px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.15);
+            filter: url(#rough-edge);
+        }
+
+        .gourmet-card:nth-child(even) .highlight-label::before {
+            transform: rotate(2.5deg) skewX(2deg);
+            background: rgba(255, 251, 235, 0.8);
+            border-radius: 20px 8px 35px 6px / 5px 15px 4px 12px;
+        }
+
+        .food-label {
+            letter-spacing: 0.01em; 
+            font-size: 1.25rem;
+        }
+
+        .logo-card {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 0 0 3rem 3rem;
+            box-shadow: 0 15px 40px -10px rgba(234, 88, 12, 0.5);
+        }
+    </style>
+</head>
+<body class="text-gray-100 min-h-screen pb-24">
+
+    <!-- Filtre SVG pour l'effet "bordure irrégulière" -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="rough-edge">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+        </filter>
+    </svg>
+
+    <header class="sticky top-0 z-50">
+        <!-- Carte Orange incluant logo + baseline -->
+        <div class="logo-card mx-auto max-w-md p-8 sm:p-10 text-center border-x border-b border-white/10">
+            <div class="logo-font text-5xl sm:text-6xl tracking-tighter w-full flex justify-center items-center">
+                <span class="font-bold text-white">WELL</span><span class="font-light text-orange-100">COOK</span>
+            </div>
+            <!-- Baseline intégrée avec retour à la ligne après la virgule -->
+            <p class="text-xs sm:text-sm text-white/90 uppercase tracking-[0.25em] font-bold mt-4 leading-relaxed">
+                La cuisson parfaite,<br>à chaque fois
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-6 space-y-8">
+        
+        <div id="timers-container" class="space-y-6">
+            <!-- Injecté par JS -->
+        </div>
+
+        <div class="relative group">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Qu'est-ce qu'on cuit ?" 
+                oninput="handleSearch(this.value)"
+                class="w-full bg-slate-900/80 border-2 border-slate-800 rounded-3xl py-5 px-8 text-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-all shadow-inner"
+            >
+        </div>
+
+        <div id="tabs-container" class="flex flex-nowrap gap-2 overflow-x-auto pb-4 no-scrollbar">
+            <button onclick="switchCategory('eggs')" id="tab-eggs" class="tab-btn active-tab flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all">Œufs</button>
+            <button onclick="switchCategory('potato')" id="tab-potato" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Patates</button>
+            <button onclick="switchCategory('pasta')" id="tab-pasta" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Pâtes</button>
+            <button onclick="switchCategory('grains')" id="tab-grains" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Grains</button>
+        </div>
+
+        <div id="options-grid" class="grid grid-cols-2 gap-5">
+            <!-- Injecté par JS -->
+        </div>
+
+    </main>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-600 to-red-600 text-white px-10 py-5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 font-bold text-lg text-center">
+        À table ! C'est prêt !
+    </div>
+
+    <script>
+        const presets = {
+            eggs: [
+                { id: 'egg-test', name: 'Test Rapide', time: 3 },
+                { id: 'egg-coque', name: 'Œuf à la coque', time: 180 },
+                { id: 'egg-mollet', name: 'Œuf mollet', time: 360 },
+                { id: 'egg-poche', name: 'Œuf poché', time: 180 },
+                { id: 'egg-dur', name: 'Œuf dur', time: 540 }
+            ],
+            potato: [
+                { id: 'pot-water', name: "Patate à l'eau", time: 1200 },
+                { id: 'pot-steam', name: "Patate vapeur", time: 1500 },
+                { id: 'pot-oven', name: "Patate au four", time: 2700 },
+                { id: 'pot-airfryer', name: "Air Fryer", time: 1080 }
+            ],
+            pasta: [
+                { id: 'pasta-spaghetti', name: 'Spaghetti', time: 540 },
+                { id: 'pasta-farfalle', name: 'Farfalle', time: 600 },
+                { id: 'pasta-fusilli', name: 'Fusilli', time: 660 },
+                { id: 'pasta-coquillettes', name: 'Coquillettes', time: 420 },
+                { id: 'pasta-penne', name: 'Penne', time: 660 },
+                { id: 'pasta-torsades', name: 'Torsades', time: 480 },
+                { id: 'pasta-macaroni', name: 'Macaroni', time: 480 },
+                { id: 'pasta-linguine', name: 'Linguine', time: 540 },
+                { id: 'pasta-frais', name: 'Pâtes fraîches', time: 180 }
+            ],
+            grains: [
+                { id: 'wheat-ebly', name: 'Blé', time: 600 },
+                { id: 'semolina-fine', name: 'Semoule fine', time: 180 },
+                { id: 'semolina-normal', name: 'Semoule', time: 300 },
+                { id: 'bulgur', name: 'Boulgour', time: 600 },
+                { id: 'rice-thai', name: 'Riz Thaï', time: 660 },
+                { id: 'rice-basmati', name: 'Riz Basmati', time: 720 },
+                { id: 'rice-round', name: 'Riz rond', time: 900 },
+                { id: 'quinoa', name: 'Quinoa', time: 900 },
+                { id: 'lentils', name: 'Lentilles', time: 1500 }
+            ]
+        };
+
+        let activeTimers = [];
+        let audioCtx = null;
+        let alarmInterval = null;
+        let currentCategory = 'eggs';
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playAlarmSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+
+        function createTimer(seconds, label) {
+            const id = Date.now();
+            activeTimers.push({ id, label, totalTime: seconds, timeLeft: seconds, isPaused: false });
+            renderTimers();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function togglePause(id) {
+            const timer = activeTimers.find(t => t.id === id);
+            if (timer) timer.isPaused = !timer.isPaused;
+            renderTimers();
+        }
+
+        function removeTimer(id) {
+            activeTimers = activeTimers.filter(t => t.id !== id);
+            checkAlarms();
+            renderTimers();
+        }
+
+        function checkAlarms() {
+            const hasFinished = activeTimers.some(t => t.timeLeft <= 0);
+            if (hasFinished && !alarmInterval) {
+                playAlarmSound();
+                alarmInterval = setInterval(playAlarmSound, 1200);
+            } else if (!hasFinished && alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+        }
+
+        function renderTimers() {
+            const container = document.getElementById('timers-container');
+            container.innerHTML = '';
+            activeTimers.forEach(timer => {
+                const mins = Math.floor(Math.max(0, timer.timeLeft) / 60);
+                const secs = Math.max(0, timer.timeLeft) % 60;
+                const progress = (timer.timeLeft / timer.totalTime) * 100;
+                const isFinished = timer.timeLeft <= 0;
+
+                const card = document.createElement('div');
+                card.className = `gourmet-card rounded-5xl p-6 flex flex-col gap-4 ${isFinished ? 'alarm-active' : ''}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-center px-2">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <h3 class="font-bold text-lg uppercase tracking-wide">${timer.label}</h3>
+                                <p class="text-xs ${isFinished ? 'text-orange-400 font-bold animate-pulse' : 'text-gray-400'}">
+                                    ${isFinished ? 'À TABLE ! C\'EST PRÊT !' : (timer.isPaused ? 'EN PAUSE' : 'EN CUISSON...')}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-bold font-mono ${isFinished ? 'text-orange-500' : 'text-white'}">
+                            ${mins}:${secs.toString().padStart(2, '0')}
+                        </div>
+                    </div>
+                    <div class="w-full bg-black/30 h-3 rounded-full overflow-hidden border border-white/5">
+                        <div class="h-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-1000 progress-glow" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        ${!isFinished ? `
+                            <button onclick="togglePause(${timer.id})" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl font-bold transition-all text-sm uppercase tracking-wider">
+                                ${timer.isPaused ? 'Reprendre' : 'Pause'}
+                            </button>
+                        ` : ''}
+                        <button onclick="removeTimer(${timer.id})" class="flex-1 py-4 ${isFinished ? 'bg-orange-600' : 'bg-white/5'} hover:opacity-80 rounded-2xl font-bold transition-all text-sm uppercase tracking-wider">
+                            ${isFinished ? 'Terminer' : 'Annuler'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleSearch(query) {
+            const grid = document.getElementById('options-grid');
+            const tabs = document.getElementById('tabs-container');
+            if (!query.trim()) {
+                tabs.classList.remove('hidden');
+                switchCategory(currentCategory);
+                return;
+            }
+            tabs.classList.add('hidden');
+            grid.innerHTML = '';
+            const results = Object.values(presets).flat()
+                .filter(item => item.name.toLowerCase().includes(query.toLowerCase()))
+                .sort((a, b) => a.time - b.time);
+
+            if (results.length === 0) {
+                grid.innerHTML = '<p class="col-span-2 text-center text-gray-500 py-12">Aucun résultat trouvé...</p>';
+            } else {
+                results.forEach(item => renderOption(item));
+            }
+        }
+
+        function switchCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab');
+                btn.classList.add('bg-slate-800/50', 'text-gray-300');
+            });
+            const activeBtn = document.getElementById(`tab-${cat}`);
+            if(activeBtn) {
+                activeBtn.classList.add('active-tab');
+                activeBtn.classList.remove('bg-slate-800/50', 'text-gray-300');
+            }
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            const sortedItems = [...presets[cat]].sort((a, b) => a.time - b.time);
+            sortedItems.forEach(item => renderOption(item));
+        }
+
+        function renderOption(item) {
+            const grid = document.getElementById('options-grid');
+            const div = document.createElement('div');
+            div.className = 'gourmet-card min-h-[140px] rounded-4xl flex items-center justify-center text-center border border-white/5 cursor-pointer group relative overflow-hidden';
+            div.onclick = () => {
+                initAudio();
+                createTimer(item.time, item.name);
+            };
+            
+            let rawValue = item.time < 60 ? item.time : Math.floor(item.time / 60);
+            
+            div.innerHTML = `
+                <div class="big-time-bg absolute inset-0 transition-all duration-500 group-hover:scale-110">
+                    ${rawValue}
+                </div>
+                <div class="relative z-10 px-2">
+                    <h3 class="food-label highlight-label text-base sm:text-lg leading-tight transition-transform group-hover:scale-105">
+                        ${item.name}
+                    </h3>
+                </div>
+            `;
+            grid.appendChild(div);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, -20px)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, 0)';
+            }, 4000);
+        }
+
+        setInterval(() => {
+            let changed = false;
+            activeTimers.forEach(timer => {
+                if (!timer.isPaused && timer.timeLeft > 0) {
+                    timer.timeLeft--;
+                    changed = true;
+                    if (timer.timeLeft === 0) {
+                        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+                        showToast();
+                    }
+                }
+            });
+            if (changed || activeTimers.some(t => t.timeLeft === 0)) {
+                renderTimers();
+                checkAlarms();
+            }
+        }, 1000);
+
+        switchCategory('eggs');
+    </script>
+</body>
+</html>
