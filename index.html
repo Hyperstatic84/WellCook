@@ -2,7 +2,7 @@
 <html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WELLCOOK</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
@@ -23,7 +23,6 @@
         }
     </script>
     <style>
-        /* Importation des polices */
         @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Comfortaa:wght@300;700&family=Fredoka:wght@400;600;700&family=Gravitas+One&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         
         body {
@@ -31,6 +30,7 @@
             background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
+            overscroll-behavior-y: contain;
         }
 
         .logo-font {
@@ -51,8 +51,9 @@
 
         .active-tab {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
+            color: white !important;
             box-shadow: 0 10px 20px -5px rgba(249, 115, 22, 0.4);
+            transform: scale(1.02);
         }
 
         @keyframes success-pulse {
@@ -62,10 +63,6 @@
         .alarm-active {
             animation: success-pulse 0.8s infinite ease-in-out;
             border-width: 3px;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
         }
 
         .progress-glow {
@@ -95,7 +92,6 @@
             color: #000;
             font-family: 'Abril Fatface', serif;
             font-weight: normal;
-            text-transform: none; 
         }
 
         .highlight-label::before {
@@ -119,21 +115,22 @@
             border-radius: 20px 8px 35px 6px / 5px 15px 4px 12px;
         }
 
-        .food-label {
-            letter-spacing: 0.01em; 
-            font-size: 1.25rem;
-        }
-
         .logo-card {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             border-radius: 0 0 3rem 3rem;
             box-shadow: 0 15px 40px -10px rgba(234, 88, 12, 0.5);
         }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body class="text-gray-100 min-h-screen pb-24">
 
-    <!-- Filtre SVG pour l'effet "bordure irrégulière" -->
     <svg style="position: absolute; width: 0; height: 0;">
         <filter id="rough-edge">
             <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
@@ -141,24 +138,15 @@
         </filter>
     </svg>
 
-    <header class="sticky top-0 z-50">
-        <!-- Carte Orange incluant logo + baseline -->
+    <header class="top-0 z-50">
         <div class="logo-card mx-auto max-w-md p-8 sm:p-10 text-center border-x border-b border-white/10">
             <div class="logo-font text-5xl sm:text-6xl tracking-tighter w-full flex justify-center items-center">
                 <span class="font-bold text-white">WELL</span><span class="font-light text-orange-100">COOK</span>
             </div>
-            <!-- Baseline intégrée avec retour à la ligne après la virgule -->
             <p class="text-xs sm:text-sm text-white/90 uppercase tracking-[0.25em] font-bold mt-4 leading-relaxed">
                 La cuisson parfaite,<br>à chaque fois
             </p>
         </div>
-            <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="WellCook">
-
-<meta name="mobile-web-app-capable" content="yes">
-
-<meta name="theme-color" content="#0f172a">
     </header>
 
     <main class="max-w-md mx-auto p-6 space-y-8">
@@ -177,11 +165,20 @@
             >
         </div>
 
-        <div id="tabs-container" class="flex flex-nowrap gap-2 overflow-x-auto pb-4 no-scrollbar">
-            <button onclick="switchCategory('eggs')" id="tab-eggs" class="tab-btn active-tab flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all">Œufs</button>
-            <button onclick="switchCategory('potato')" id="tab-potato" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Patates</button>
-            <button onclick="switchCategory('pasta')" id="tab-pasta" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Pâtes</button>
-            <button onclick="switchCategory('grains')" id="tab-grains" class="tab-btn bg-slate-800/50 text-gray-300 flex-1 min-w-fit px-5 py-4 rounded-full font-bold text-base sm:text-lg whitespace-nowrap transition-all border border-white/5">Grains</button>
+        <!-- Onglets Textuels -->
+        <div id="tabs-container" class="grid grid-cols-4 gap-2 bg-slate-900/40 p-1.5 rounded-3xl border border-white/5">
+            <button onclick="switchCategory('eggs')" id="tab-eggs" class="tab-btn active-tab py-4 rounded-2xl transition-all">
+                <span class="text-xs font-bold uppercase tracking-wider">Œufs</span>
+            </button>
+            <button onclick="switchCategory('potato')" id="tab-potato" class="tab-btn text-gray-400 py-4 rounded-2xl transition-all">
+                <span class="text-xs font-bold uppercase tracking-wider">Patates</span>
+            </button>
+            <button onclick="switchCategory('pasta')" id="tab-pasta" class="tab-btn text-gray-400 py-4 rounded-2xl transition-all">
+                <span class="text-xs font-bold uppercase tracking-wider">Pâtes</span>
+            </button>
+            <button onclick="switchCategory('grains')" id="tab-grains" class="tab-btn text-gray-400 py-4 rounded-2xl transition-all">
+                <span class="text-xs font-bold uppercase tracking-wider">Riz</span>
+            </button>
         </div>
 
         <div id="options-grid" class="grid grid-cols-2 gap-5">
@@ -197,7 +194,6 @@
     <script>
         const presets = {
             eggs: [
-                { id: 'egg-test', name: 'Test Rapide', time: 3 },
                 { id: 'egg-coque', name: 'Œuf à la coque', time: 180 },
                 { id: 'egg-mollet', name: 'Œuf mollet', time: 360 },
                 { id: 'egg-poche', name: 'Œuf poché', time: 180 },
@@ -244,18 +240,19 @@
 
         function playAlarmSound() {
             initAudio();
-            const oscillator = audioCtx.createOscillator();
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
             const gainNode = audioCtx.createGain();
-            oscillator.type = 'triangle';
-            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.2);
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.1);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-            oscillator.connect(gainNode);
+            gainNode.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.05);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'square';
+            osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+            osc1.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+            osc1.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.5);
+            osc1.start();
+            osc1.stop(audioCtx.currentTime + 0.8);
         }
 
         function createTimer(seconds, label) {
@@ -281,7 +278,7 @@
             const hasFinished = activeTimers.some(t => t.timeLeft <= 0);
             if (hasFinished && !alarmInterval) {
                 playAlarmSound();
-                alarmInterval = setInterval(playAlarmSound, 1200);
+                alarmInterval = setInterval(playAlarmSound, 1000);
             } else if (!hasFinished && alarmInterval) {
                 clearInterval(alarmInterval);
                 alarmInterval = null;
@@ -291,23 +288,22 @@
         function renderTimers() {
             const container = document.getElementById('timers-container');
             container.innerHTML = '';
-            activeTimers.forEach(timer => {
+            // Les minuteurs actifs sont déjà triés par temps restant
+            const sortedTimers = [...activeTimers].sort((a, b) => a.timeLeft - b.timeLeft);
+            sortedTimers.forEach(timer => {
                 const mins = Math.floor(Math.max(0, timer.timeLeft) / 60);
                 const secs = Math.max(0, timer.timeLeft) % 60;
                 const progress = (timer.timeLeft / timer.totalTime) * 100;
                 const isFinished = timer.timeLeft <= 0;
-
                 const card = document.createElement('div');
                 card.className = `gourmet-card rounded-5xl p-6 flex flex-col gap-4 ${isFinished ? 'alarm-active' : ''}`;
                 card.innerHTML = `
                     <div class="flex justify-between items-center px-2">
-                        <div class="flex items-center gap-4">
-                            <div>
-                                <h3 class="font-bold text-lg uppercase tracking-wide">${timer.label}</h3>
-                                <p class="text-xs ${isFinished ? 'text-orange-400 font-bold animate-pulse' : 'text-gray-400'}">
-                                    ${isFinished ? 'À TABLE ! C\'EST PRÊT !' : (timer.isPaused ? 'EN PAUSE' : 'EN CUISSON...')}
-                                </p>
-                            </div>
+                        <div>
+                            <h3 class="font-bold text-lg uppercase tracking-wide">${timer.label}</h3>
+                            <p class="text-xs ${isFinished ? 'text-orange-400 font-bold animate-pulse' : 'text-gray-400'}">
+                                ${isFinished ? 'À TABLE ! C\'EST PRÊT !' : (timer.isPaused ? 'EN PAUSE' : 'EN CUISSON...')}
+                            </p>
                         </div>
                         <div class="text-3xl font-bold font-mono ${isFinished ? 'text-orange-500' : 'text-white'}">
                             ${mins}:${secs.toString().padStart(2, '0')}
@@ -341,31 +337,28 @@
             }
             tabs.classList.add('hidden');
             grid.innerHTML = '';
+            // Recherche avec tri par temps
             const results = Object.values(presets).flat()
                 .filter(item => item.name.toLowerCase().includes(query.toLowerCase()))
                 .sort((a, b) => a.time - b.time);
-
-            if (results.length === 0) {
-                grid.innerHTML = '<p class="col-span-2 text-center text-gray-500 py-12">Aucun résultat trouvé...</p>';
-            } else {
-                results.forEach(item => renderOption(item));
-            }
+            results.forEach(item => renderOption(item));
         }
 
         function switchCategory(cat) {
             currentCategory = cat;
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active-tab');
-                btn.classList.add('bg-slate-800/50', 'text-gray-300');
+                btn.classList.add('text-gray-400');
             });
             const activeBtn = document.getElementById(`tab-${cat}`);
             if(activeBtn) {
                 activeBtn.classList.add('active-tab');
-                activeBtn.classList.remove('bg-slate-800/50', 'text-gray-300');
+                activeBtn.classList.remove('text-gray-400');
             }
-
             const grid = document.getElementById('options-grid');
             grid.innerHTML = '';
+            
+            // Tri des préréglages de la catégorie par temps
             const sortedItems = [...presets[cat]].sort((a, b) => a.time - b.time);
             sortedItems.forEach(item => renderOption(item));
         }
@@ -378,17 +371,11 @@
                 initAudio();
                 createTimer(item.time, item.name);
             };
-            
             let rawValue = item.time < 60 ? item.time : Math.floor(item.time / 60);
-            
             div.innerHTML = `
-                <div class="big-time-bg absolute inset-0 transition-all duration-500 group-hover:scale-110">
-                    ${rawValue}
-                </div>
+                <div class="big-time-bg absolute inset-0 transition-all duration-500 group-hover:scale-110">${rawValue}</div>
                 <div class="relative z-10 px-2">
-                    <h3 class="food-label highlight-label text-base sm:text-lg leading-tight transition-transform group-hover:scale-105">
-                        ${item.name}
-                    </h3>
+                    <h3 class="highlight-label text-base sm:text-lg leading-tight transition-transform group-hover:scale-105">${item.name}</h3>
                 </div>
             `;
             grid.appendChild(div);
@@ -405,26 +392,17 @@
         }
 
         setInterval(() => {
-            let changed = false;
             activeTimers.forEach(timer => {
                 if (!timer.isPaused && timer.timeLeft > 0) {
                     timer.timeLeft--;
-                    changed = true;
-                    if (timer.timeLeft === 0) {
-                        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-                        showToast();
-                    }
+                    if (timer.timeLeft === 0) showToast();
                 }
             });
-            if (changed || activeTimers.some(t => t.timeLeft === 0)) {
-                renderTimers();
-                checkAlarms();
-            }
+            renderTimers();
+            checkAlarms();
         }, 1000);
 
         switchCategory('eggs');
     </script>
 </body>
 </html>
-
-
