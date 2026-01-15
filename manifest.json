@@ -1,13 +1,19 @@
 {
-  "name": "WELLCOOK",
-  "short_name": "WELLCOOK",
-  "description": "La cuisson parfaite, à chaque fois.",
+  "name": "WellCook - Cuisson Parfaite",
+  "short_name": "WellCook",
+  "description": "L'application de chronométrage pour des cuissons toujours réussies.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#f97316",
-  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "icon.svg",
       "sizes": "512x512",
@@ -16,5 +22,3 @@
     }
   ]
 }
-
-
