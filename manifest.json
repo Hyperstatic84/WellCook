@@ -1,5 +1,5 @@
 {
-  "name": "WELLCOOK - Cuisine Gourmande",
+  "name": "WELLCOOK",
   "short_name": "WELLCOOK",
   "description": "La cuisson parfaite, à chaque fois.",
   "start_url": "./index.html",
@@ -16,4 +16,5 @@
     }
   ]
 }
+
 
