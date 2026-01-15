@@ -1,16 +1,18 @@
 {
-  "name": "Etho-Track Bilan",
-  "short_name": "EthoTrack",
-  "start_url": "index.html",
+  "name": "WELLCOOK - Cuisine Gourmande",
+  "short_name": "WELLCOOK",
+  "description": "La cuisson parfaite, à chaque fois.",
+  "start_url": "./WellCook.html",
   "display": "standalone",
-  "background_color": "#3730a3",
-  "theme_color": "#3730a3",
+  "background_color": "#020617",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
